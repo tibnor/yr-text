@@ -4,7 +4,7 @@
   "description": "Make yr.no forecast into text forecasts",
   "main": "yr_forecast.js",
   "scripts": {
-    "test": "mocha lib/**/**.spec.js"
+    "test": "mocha **/**.spec.js"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,18 @@
   "homepage": "https://github.com/tibnor/yr-text#readme",
   "devDependencies": {
     "chai": "^4.1.2",
+    "eslint": "^4.19.1",
     "https": "^1.0.0",
     "mocha": "^5.1.1",
     "xml2js": "^0.4.19",
     "yr.no-forecast": "^2.1.0"
+  },
+  "dependencies": {
+    "ajv": "^6.5.0",
+    "chai-datetime": "^1.5.0",
+    "chai-like": "^1.1.1",
+    "chai-things": "^0.2.0",
+    "json-beautify": "^1.0.1",
+    "rewire": "^4.0.1"
   }
 }

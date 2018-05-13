@@ -1,0 +1,295 @@
+{
+	"$": {
+		"xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+		"xsi:noNamespaceSchemaLocation": "http://api.met.no/weatherapi/locationforecast/1.5/schema",
+		"created": "2018-05-10T10:16:27Z"
+	},
+	"meta": [{
+		"model": [{
+			"$": {
+				"name": "NowCast",
+				"termin": "2018-05-10T10:07:30Z",
+				"runended": "2018-05-10T10:14:54Z",
+				"nextrun": "2018-05-10T10:22:24Z",
+				"from": "2018-05-10T10:15:00Z",
+				"to": "2018-05-10T12:00:00Z"
+			}
+		}]
+	}],
+	"product": [{
+		"$": {
+			"class": "pointData"
+		},
+		"time": [{
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T10:15:00Z",
+				"to": "2018-05-10T10:15:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "2.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T10:22:30Z",
+				"to": "2018-05-10T10:22:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "3.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T10:30:00Z",
+				"to": "2018-05-10T10:30:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T10:37:30Z",
+				"to": "2018-05-10T10:37:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T10:45:00Z",
+				"to": "2018-05-10T10:45:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T10:52:30Z",
+				"to": "2018-05-10T10:52:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:00:00Z",
+				"to": "2018-05-10T11:00:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:07:30Z",
+				"to": "2018-05-10T11:07:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:15:00Z",
+				"to": "2018-05-10T11:15:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:22:30Z",
+				"to": "2018-05-10T11:22:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:30:00Z",
+				"to": "2018-05-10T11:30:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:37:30Z",
+				"to": "2018-05-10T11:37:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:45:00Z",
+				"to": "2018-05-10T11:45:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T11:52:30Z",
+				"to": "2018-05-10T11:52:30Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}, {
+			"$": {
+				"datatype": "forecast",
+				"from": "2018-05-10T12:00:00Z",
+				"to": "2018-05-10T12:00:00Z"
+			},
+			"location": [{
+				"$": {
+					"latitude": "60.0000",
+					"longitude": "11.0000"
+				},
+				"precipitation": [{
+					"$": {
+						"unit": "mm/h",
+						"value": "0.0"
+					}
+				}]
+			}]
+		}]
+	}]
+}
