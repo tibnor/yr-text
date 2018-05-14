@@ -2,10 +2,8 @@
 const getForecast = require('./get-forecasts')
 
 exports.getNowcast = function(lat,lon) {
-  return new Promise(async resolve => {
-    const data = await getNowcastData(lat,lon);
-    const txt = nowcast2text(data, Date.now())
-    resolve(txt)
+  return getNowcastData(lat,lon).then(data => {
+    return nowcast2text(data, Date.now())
   })
 }
 
