@@ -25,35 +25,31 @@ function () {
     return str;
 };
 
-parser.on('error', function(err) { console.log('Parser error', err); });
+parser.on('error', (err) => { console.log('Parser error', err); });
 
 exports.getForecastToday = function(lat,lon) {
   let from = Date.now()
   let to = roundDownDate(from)
   to.setHours(0)
   to.setDate(to.getDate() + 1)
-
-  return new Promise( async (resolve, reject) =>  {
-    const data = await get_forecast.getWeather(lat,lon)
+  let txt = ""
+  return new get_forecast.getWeather(lat,lon)
       .catch(error => {
         resolve("Weather forecast is not available from yr.no")
-        return;
       })
-    if (data == undefined)
-      return;
+      .then(data => {
     const tempNow = getTemperatureNow(data);
-    let txt = temperatureNow2txt(tempNow) + " ";
-
+    txt += temperatureNow2txt(tempNow) + " ";
     const minmax = minmaxpoints(data, from, to)
     const timerange = getTimeRangeElements(data, from, to)
     txt += prediction2txt(minmax, timerange) + " "
-    try {
-      txt += await nowcast.getNowcast(lat,lon)
-    } catch (error){
+    return nowcast.getNowcast(lat,lon)})
+    .catch( (error) => {
       txt += "Nowcast is not available"
-    }
-    resolve(txt)
-  })
+    })
+    .then( data=> {
+            return txt + data
+    })
 }
 
 minmaxpoints = function(weather, from, to){
@@ -131,7 +127,7 @@ function temperature2str(temperatureNow){
   if (temperatureNow < 0){
     temperatureNow = 'minus '+(-temperatureNow)
   } else {
-    temperatureNow = ''+temperatureNow
+    temperatureNow = String(temperatureNow)
   }
   return temperatureNow
 }

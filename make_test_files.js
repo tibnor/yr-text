@@ -7,7 +7,7 @@ const beautify = require("json-beautify");
 
 const lat = 60;
 const lon = 11;
-async function storeNowcast(){
+async function storeNowcast() {
 	const result = await nowcast.getNowcast(lat, lon);
 	const json = JSON.stringify(result);
 	fs.writeFile('test_files/nowcast.json', json, 'utf8', ()=>{});

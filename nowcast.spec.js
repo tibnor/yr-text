@@ -7,11 +7,14 @@ const fs = require("fs");
 let now = new Date("2018-05-10T10:20:00Z");
 
 function getData(file) {
-  return new Promise(function(resolve) {
-    fs.readFile(file, "utf8", function readFileCallback(err, data){
+  return new Promise(((resolve) => {
+    fs.readFile(file, "utf8", (err, data) => {
+      if (err) {
+        reject(err)
+      }
       resolve(JSON.parse(data));
     });
-  });
+  }));
 }
 
 const getNowcastData = nowcast.__get__('getNowcastData')

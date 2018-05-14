@@ -1,4 +1,5 @@
 'use strict'
+'use ecmaVersion: 2017'
 
 var chai = require('chai');
 chai.use(require('chai-like'));
@@ -16,162 +17,186 @@ const lat = 60;
 const lon = 11;
 
 function getData(file) {
-  return new Promise(function(resolve) {
-    fs.readFile(file, "utf8", function readFileCallback(err, data){
-      resolve(JSON.parse(data));
+  return new Promise(((resolve,reject) => {
+    fs.readFile(file, "utf8", (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(data));
+      }
     });
-  });
+  }));
 }
 
 describe("getForecastToday", () => {
-	it('should return a string', async () => {
-		let res = await yr.getForecastToday(lat,lon)
-		expect(res).to.be.a('String')
-	})
-	it('should contain temperature now', async () => {
-		let res = await yr.getForecastToday(lat,lon)
-		expect(res).to.contain("The temperature is now")
-	})
-	it('should contain temperature range', async () => {
-		let res = await yr.getForecastToday(lat,lon)
-		expect(res).to.contain("The temperature will be between")
-	})
-	it('should contain precipitation range', async () => {
-		let res = await yr.getForecastToday(lat,lon)
-		expect(res).to.contain("precipitation")
-	})
+  it('should return a string',  () => {
+    return yr.getForecastToday(lat,lon).then( res => {
+      expect(res).to.be.a('String')
+      expect(res).to.contain("The temperature is now")
+      expect(res).to.contain("The temperature will be between")
+      expect(res).to.contain("precipitation")
+      return;
+    })
+  })
 })
 
 const minmaxpoints = yr.__get__('minmaxpoints')
 describe("minmaxpoints", () => {
-	it('Should return dictionary', async () => {
-	let obj = await getData("test_files/hourly_test.json")
-	let res = minmaxpoints(obj,from,to);
-	expect(res).to.be.a('Object')
-})
-	it('get minimum temperature', async () => {
-	let obj = await getData("test_files/hourly_test.json")
-	let res = minmaxpoints(obj,from,to);
-	expect(res['minimumtemperature']).to.equal(11.4);
-})
-	it('get maximum temperature', async () => {
-	let obj = await getData("test_files/hourly_test.json")
-	let res = minmaxpoints(obj,from,to);
-	expect(res['maximumtemperature']).to.equal(21.2)
-})
-	it('get maximum wind speed', async () => {
-    let obj = await getData("test_files/hourly_test.json")
-  	let res = minmaxpoints(obj,from,to);
-  	expect(res['maximumwindspeed']).to.equal(3.5)
+  it('Should return dictionary',  () => {
+    return getData("test_files/hourly_test.json")
+    .then(obj => {
+      let res = minmaxpoints(obj,from,to);
+      expect(res).to.be.a('Object')
+      return;
+    });
   })
+  it('get minimum temperature',() => {
+    return getData("test_files/hourly_test.json")
+    .then(obj => {
+      let res = minmaxpoints(obj,from,to);
+      expect(res['minimumtemperature']).to.equal(11.4);
+      return;
+    });
+  })
+  it('get maximum temperature', () => {
+    return getData("test_files/hourly_test.json")
+    .then(obj => {
+      let res = minmaxpoints(obj,from,to);
+      expect(res['maximumtemperature']).to.equal(21.2);
+      return;
+    });
+  })
+  it('get maximum wind speed', () => {
+    return getData("test_files/hourly_test.json")
+    .then(obj => {
+      let res = minmaxpoints(obj,from,to);
+      expect(res['maximumwindspeed']).to.equal(3.5)
+      return;
+    });
+})
 })
 
 const roundDownDate = yr.__get__('roundDownDate')
 describe('roundDownDate', () => {
-	it('Should return Date',  () => {
-		const inTime = new Date("2018-05-13T11:20:00Z")
-		const outTime = roundDownDate(inTime);
-		expect(outTime).to.be.a("Date")
-	})
-	it('Should round down to previous hour',  () => {
-		const inTime = new Date("2018-05-13T11:20:01.5Z")
-		const outTime = roundDownDate(inTime);
-		expect(outTime).to.equalTime(new Date("2018-05-13T11:00:00Z"))
-	})
-	it('Should round down to previous hour or same if at hole hour',  () => {
-		const inTime = new Date("2018-05-13T11:00:00Z")
-		const outTime = roundDownDate(inTime);
-		expect(outTime).to.equalTime(new Date("2018-05-13T11:00:00Z"))
-	})
+  it('Should return Date',  () => {
+    const inTime = new Date("2018-05-13T11:20:00Z")
+    const outTime = roundDownDate(inTime);
+    expect(outTime).to.be.a("Date")
+  })
+  it('Should round down to previous hour',  () => {
+    const inTime = new Date("2018-05-13T11:20:01.5Z")
+    const outTime = roundDownDate(inTime);
+    expect(outTime).to.equalTime(new Date("2018-05-13T11:00:00Z"))
+  })
+  it('Should round down to previous hour or same if at hole hour',  () => {
+    const inTime = new Date("2018-05-13T11:00:00Z")
+    const outTime = roundDownDate(inTime);
+    expect(outTime).to.equalTime(new Date("2018-05-13T11:00:00Z"))
+  })
 })
 
 const getTimeRangeElements = yr.__get__('getTimeRangeElements')
 describe('getTimeRangeElements', () => {
-	it('Should return Array', async () => {
-		let obj = await getData("test_files/hourly_test.json")
-		let res = getTimeRangeElements(obj,from,to);
-		expect(res).to.be.an('Array')
-		expect(res).to.have.lengthOf(14)
-	})
-	it('First element should start at 12', async () => {
-		let obj = await getData("test_files/hourly_test.json")
-		let res = getTimeRangeElements(obj,from,to);
-		expect(res[0]["from"]).to.equalTime(new Date("2018-05-13T12:00:00Z"))
-	})
-	it('Last element should end at 02', async () => {
-		let obj = await getData("test_files/hourly_test.json")
-		let res = getTimeRangeElements(obj,from,to);
-		expect(res[13]["to"]).to.equalTime(new Date("2018-05-14T02:00:00Z"))
-	})
-	it('First element should have value, min, max', async () => {
-		let obj = await getData("test_files/hourly_test.json")
-		let res = getTimeRangeElements(obj,from,to)[0];
-		expect(res["precipitation"]).to.equal(0.2)
-		expect(res["min_precipitation"]).to.equal(0)
-		expect(res["max_precipitation"]).to.equal(0.3)
-	})
+  it('Should return Array',  () => {
+    return getData("test_files/hourly_test.json")
+      .then(obj => {
+    let res = getTimeRangeElements(obj,from,to);
+    expect(res).to.be.an('Array')
+    expect(res).to.have.lengthOf(14)
+    return;
+  })
+  })
+  it('First element should start at 12',() => {
+    return getData("test_files/hourly_test.json")
+      .then(obj => {
+    let res = getTimeRangeElements(obj,from,to);
+    expect(res[0]["from"]).to.equalTime(new Date("2018-05-13T12:00:00Z"))
+    return;
+  })
+  })
+  it('Last element should end at 02', () => {
+    return getData("test_files/hourly_test.json")
+      .then(obj => {
+    let res = getTimeRangeElements(obj,from,to);
+    expect(res[13]["to"]).to.equalTime(new Date("2018-05-14T02:00:00Z"))
+    return;
+  })
+  })
+  it('First element should have value, min, max', () => {
+    return getData("test_files/hourly_test.json").then( obj => {
+    let res = getTimeRangeElements(obj,from,to);
+    expect(res[0]["precipitation"]).to.equal(0.2)
+    expect(res[0]["min_precipitation"]).to.equal(0)
+    expect(res[0]["max_precipitation"]).to.equal(0.3)
+    return;
+  })
+})
 })
 
 const getTemperatureNow = yr.__get__('getTemperatureNow')
 
 describe("getTemperatureNow", () => {
-	it('Should return first temperature', async () => {
-	let obj = await getData("test_files/hourly_test.json")
-	let res = getTemperatureNow(obj);
-	expect(res).to.equal(10.1)
-})
+  it('Should return first temperature',  () => {
+    return getData("test_files/hourly_test.json")
+      .then(obj =>{
+    let res = getTemperatureNow(obj);
+    expect(res).to.equal(10.1)
+    return
+  }
+  )
+  })
 })
 
 let testDataRange =
 [{
-	"from": new Date("2018-05-13T10:00:00Z"),
-	"to": new Date("2018-05-13T11:00:00Z"),
-	"precipitation": 2.5,
-	"min_precipitation": 0,
-	"max_precipitation": 5
+  "from": new Date("2018-05-13T10:00:00Z"),
+  "to": new Date("2018-05-13T11:00:00Z"),
+  "precipitation": 2.5,
+  "min_precipitation": 0,
+  "max_precipitation": 5
 },
 {
-	"from": new Date("2018-05-13T11:00:00Z"),
-	"to": new Date("2018-05-13T12:00:00Z"),
-	"precipitation": 1,
-	"min_precipitation": 0.2,
-	"max_precipitation": 3
+  "from": new Date("2018-05-13T11:00:00Z"),
+  "to": new Date("2018-05-13T12:00:00Z"),
+  "precipitation": 1,
+  "min_precipitation": 0.2,
+  "max_precipitation": 3
 } ];
 
 let testDataRangeNoRain =
 [{
-	"from": new Date("2018-05-13T10:00:00Z"),
-	"to": new Date("2018-05-13T11:00:00Z"),
-	"precipitation": 0,
-	"min_precipitation": 0,
-	"max_precipitation": 0
+  "from": new Date("2018-05-13T10:00:00Z"),
+  "to": new Date("2018-05-13T11:00:00Z"),
+  "precipitation": 0,
+  "min_precipitation": 0,
+  "max_precipitation": 0
 },
 {
-	"from": new Date("2018-05-13T11:00:00Z"),
-	"to": new Date("2018-05-13T12:00:00Z"),
-	"precipitation": 0,
-	"min_precipitation": 0,
-	"max_precipitation": 0
+  "from": new Date("2018-05-13T11:00:00Z"),
+  "to": new Date("2018-05-13T12:00:00Z"),
+  "precipitation": 0,
+  "min_precipitation": 0,
+  "max_precipitation": 0
 } ];
 
 let testData = {
-	"minimumtemperature": -3.2,
-	"maximumtemperature": 5,
-	"maximumwindspeed": 7
+  "minimumtemperature": -3.2,
+  "maximumtemperature": 5,
+  "maximumwindspeed": 7
 }
 
 const prediction2txt = yr.__get__('prediction2txt')
-	describe("prediction2txt", () => {
-		it('should state the min and max temperature', () => {
-			let res = prediction2txt(testData, testDataRange);
-			expect(res).to.contain("The temperature will be between minus 3.2 and 5 degrees.");
-		})
-		it('should state the min and max precipitation', () => {
-			let res = prediction2txt(testData, testDataRange);
-			expect(res).to.contain("The precipitation will be between 0.2 and 8 millimeter.");
-		})
-		it('should state that it will not rain', () => {
-			let res = prediction2txt(testData, testDataRangeNoRain);
-			expect(res).to.contain("No precipitation is forecasted.");
-		})
-	})
+describe("prediction2txt", () => {
+  it('should state the min and max temperature', () => {
+    let res = prediction2txt(testData, testDataRange);
+    expect(res).to.contain("The temperature will be between minus 3.2 and 5 degrees.");
+  })
+  it('should state the min and max precipitation', () => {
+    let res = prediction2txt(testData, testDataRange);
+    expect(res).to.contain("The precipitation will be between 0.2 and 8 millimeter.");
+  })
+  it('should state that it will not rain', () => {
+    let res = prediction2txt(testData, testDataRangeNoRain);
+    expect(res).to.contain("No precipitation is forecasted.");
+  })
+})

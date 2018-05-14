@@ -6,11 +6,11 @@ const parser = new xml2js.Parser();
 exports.getForecastXml = function(url) {
 	return new Promise((resolve,reject) => {
   var data = '';
-  https.get(url, function(res) {
+  https.get(url, (res) => {
     if (res.statusCode >= 200 && res.statusCode < 400) {
-      res.on('data', function(data_) { data += data_.toString(); });
-      res.on('end', function() {
-        parser.parseString(data, function(err, result) {
+      res.on('data', (data_) => { data += data_.toString(); });
+      res.on('end', () => {
+        parser.parseString(data, (err, result) => {
           if (err){
             reject(err)
             return;
@@ -19,7 +19,7 @@ exports.getForecastXml = function(url) {
         });
       });
     } else {
-			reject('Got status code '+res.statusCode);
+			reject(new Error('Got status code '+res.statusCode));
 		}
   });
 });
