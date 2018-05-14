@@ -52,6 +52,24 @@ exports.getForecastToday = function(lat,lon) {
     })
 }
 
+exports.getForecastDay = function(lat,lon, day) {
+  let from = roundDownToMidnightDate(day)
+  let to = new Date(from)
+  to.setHours(0)
+  to.setDate(to.getDate() + 1)
+  let txt = ""
+  return new get_forecast.getWeather(lat,lon)
+      .catch(error => {
+        resolve("Weather forecast is not available from yr.no")
+      })
+      .then(data => {
+    const minmax = minmaxpoints(data, from, to)
+    const timerange = getTimeRangeElements(data, from, to)
+    txt += prediction2txt(minmax, timerange)
+    return txt
+  })
+}
+
 minmaxpoints = function(weather, from, to){
   try {
     var forecast = weather['product'][0]['time']
@@ -120,6 +138,11 @@ getTimeRangeElements = function(weather, fromIn, toIn){
 
 function roundDownDate(from) {
   from -= from % (1000 * 60 * 60)
+  return new Date(from)
+}
+
+function roundDownToMidnightDate(from) {
+  from -= from % (1000 * 60 * 60*24)
   return new Date(from)
 }
 

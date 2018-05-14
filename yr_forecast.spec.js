@@ -13,8 +13,8 @@ const yr = rewire("./yr_forecast");
 const fs = require("fs");
 const from = new Date("2018-05-13T12:20:00Z");
 const to =   new Date("2018-05-14T02:00:00Z");
-const lat = 60;
-const lon = 11;
+const lat = 63.4202
+const lon = 10.4294
 
 function getData(file) {
   return new Promise(((resolve,reject) => {
@@ -35,6 +35,21 @@ describe("getForecastToday", () => {
       expect(res).to.contain("The temperature is now")
       expect(res).to.contain("The temperature will be between")
       expect(res).to.contain("precipitation")
+      console.log(res)
+      return;
+    })
+  })
+})
+
+describe("getForecastDay", () => {
+  it('should return a string',  () => {
+    let tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate()+1)
+    return yr.getForecastDay(lat,lon, tomorrow).then( res => {
+      expect(res).to.be.a('String')
+      expect(res).to.contain("The temperature will be between")
+      expect(res).to.contain("precipitation")
+      console.log(res)
       return;
     })
   })
