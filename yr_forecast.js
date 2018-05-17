@@ -8,7 +8,7 @@ const locationGeo = ''
 
 String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
 function () {
-    "use strict";
+"use strict";
     var str = this.toString();
     if (arguments.length) {
         var t = typeof arguments[0];
@@ -28,16 +28,19 @@ function () {
 parser.on('error', (err) => { console.log('Parser error', err); });
 
 exports.getForecastToday = function(lat,lon) {
-  let from = Date.now()
-  let to = roundDownDate(from)
+  let from = new Date()
+  let to = roundDownDate(Date.now())
   to.setHours(0)
   to.setDate(to.getDate() + 1)
+  console.log(from,to)
   let txt = ""
   return new get_forecast.getWeather(lat,lon)
       .catch(error => {
         resolve("Weather forecast is not available from yr.no")
       })
       .then(data => {
+    const day = exports.getDay(data,from,to)
+    txt += getSymbolsForDay(day, from,to) + " ";
     const tempNow = getTemperatureNow(data);
     txt += temperatureNow2txt(tempNow) + " ";
     const minmax = minmaxpoints(data, from, to)
@@ -45,11 +48,107 @@ exports.getForecastToday = function(lat,lon) {
     txt += prediction2txt(minmax, timerange) + " "
     return nowcast.getNowcast(lat,lon)})
     .catch( (error) => {
+      console.log(error)
       txt += "Nowcast is not available"
     })
     .then( data=> {
             return txt + data
     })
+}
+
+function symbolId2txt(id) {
+  id2txt={
+  1: "Sun",
+2: "Light cloudes",
+3: "Partly cloudes",
+4: "Cloudes",
+5: "Light rain and sun",
+6: "Light rain, thunder and sun",
+7: "Sleet and sun",
+8: "Snow and sun",
+9: "Light rain",
+10: "Rain",
+11: "Rain and thunder",
+12: "Sleet",
+13: "Snow",
+14: "Snow and thunder",
+15: "Fog",
+20: "Sleet, sun and thunder",
+21: "Snow, sun, and thunder",
+22: "Light rainThunder",
+23: "Sleet and thunder",
+24: "Drizzle, thunder and sun",
+25: "Rain, thunder and sun",
+26: "Light sleet, thunder and sun",
+27: "Heavy sleet, thunder and sun",
+28: "Light snow, thunder and sun",
+29: "Heavy snow, thunder and sun",
+30: "Drizzle and thunder",
+31: "Light sleet and Thunder",
+32: "Heavy sleet and Thunder",
+33: "Light Snow and Thunder",
+34: "Heavy snow and Thunder",
+40: "Drizzle and sun",
+41: "Rain and sun",
+42: "Light sleet and sun",
+43: "Heavy sleet and sun",
+44: "Light snow and sun",
+45: "Heavy snow and sun",
+46: "Drizzle",
+47: "Light  sleet",
+48: "Heavy sleet",
+49: "Light Snow",
+50: "Heavy snow",
+}
+  return id2txt[id].toLowerCase()
+}
+
+function getSymbolsForDay(weatherday) {
+  //let night = parseInt(weatherday.sixhour[0].symbol[0]["$"].number)
+  let morning, morningtxt, day, daytxt, evening, eveningtxt
+  if (weatherday.sixhour[6] !== undefined){
+    morning = parseInt(weatherday.sixhour[6].symbol[0]["$"].number)
+    morningtxt = symbolId2txt(morning)
+  }
+  if (weatherday.sixhour[12] !== undefined) {
+   day = parseInt(weatherday.sixhour[12].symbol[0]["$"].number)
+   daytxt = symbolId2txt(day)
+  }
+  if (weatherday.sixhour[18] !== undefined) {
+    evening = parseInt(weatherday.sixhour[18].symbol[0]["$"].number)
+    eveningtxt = symbolId2txt(evening)
+  }
+  if (evening === undefined)
+    return ""
+  else if (day === undefined) {
+    return "It will be {eve} in the evening.".formatUnicorn({eve:eveningtxt})
+  } else if (morning === undefined) {
+    if (evening === day)
+      return "It will be {eve}.".formatUnicorn({eve:eveningtxt})
+    else {
+      return "It will be {day} and in the evening it will be {eve}.".formatUnicorn({
+        "day":daytxt, eve:eveningtxt
+      })
+    }
+  }
+  if (morning === day){
+    if (day === evening) {
+      return "It will be {symbol}.".formatUnicorn({symbol: morningtxt})
+    } else {
+      return "It will be {mor}, in the evening it will be {eve}.".formatUnicorn({
+        mor:morningtxt, eve:eveningtxt
+      })
+    }
+  } else if (day === evening) {
+      return "It will be {mor} from the morning, and {eve} from the afternoon.".formatUnicorn({
+        mor:morningtxt, eve:eveningtxt
+      })
+  } else {
+    return "In the morning it will be {mor}, later it will be {day} and in the evening it will be {eve}.".formatUnicorn({
+      mor:morningtxt, "day":daytxt, eve:eveningtxt
+    })
+  }
+
 }
 
 function date2fromto(day) {
@@ -75,11 +174,50 @@ exports.getForecastDay = function(lat,lon, day) {
         resolve("Weather forecast is not available from yr.no")
       })
       .then(data => {
+    const day = exports.getDay(data,from,to)
+    txt += getSymbolsForDay(day, from,to) + " ";
     const minmax = minmaxpoints(data, from, to)
     const timerange = getTimeRangeElements(data, from, to)
     txt += prediction2txt(minmax, timerange)
     return txt
+  }).catch(error => {
+    console.error(error);
+    throw error;
   })
+}
+
+exports.getDay = function(weather, from, to){
+  var forecast = weather['product'][0]['time']
+  let out = {
+    "points": [],
+    "hour": [],
+    "twohour": [],
+    "threehour": [],
+    "sixhour": []
+  }
+
+  for (i = 0; i < forecast.length; i++) {
+    var f = forecast[i]
+    let fromE = new Date(f['$']['from'])
+    let toE = new Date(f['$']['to'])
+    let dt = (toE - fromE)/3600000
+    if(from <= fromE && fromE < to){
+      let data = f["location"][0]
+      var hour = (fromE.getHours()) % 24
+      if(dt === 0){
+        out.points[hour] = data
+      } else if (dt === 1){
+        out.hour[hour] = data
+      } else if (dt === 2){
+        out.twohour[hour] = data
+      } else if (dt === 3){
+        out.threehour[hour] = data
+      } else if (dt === 6){
+        out.sixhour[hour] = data
+      }
+    }
+  }
+  return out
 }
 
 minmaxpoints = function(weather, from, to){
