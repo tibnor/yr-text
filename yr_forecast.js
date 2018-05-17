@@ -52,11 +52,23 @@ exports.getForecastToday = function(lat,lon) {
     })
 }
 
-exports.getForecastDay = function(lat,lon, day) {
-  let from = roundDownToMidnightDate(day)
+function date2fromto(day) {
+  let from = new Date(day)
+  from.setMilliseconds(0)
+  from.setSeconds(0)
+  from.setMinutes(0)
+  from.setHours(0)
+
   let to = new Date(from)
   to.setHours(0)
   to.setDate(to.getDate() + 1)
+  return [from,to]
+}
+
+exports.getForecastDay = function(lat,lon, day) {
+  const res = date2fromto(day)
+  let from = res[0]
+  let to = res[1]
   let txt = ""
   return new get_forecast.getWeather(lat,lon)
       .catch(error => {

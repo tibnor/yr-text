@@ -45,6 +45,7 @@ describe("getForecastDay", () => {
   it('should return a string',  () => {
     let tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate()+1)
+    tomorrow = tomorrow.toString()
     return yr.getForecastDay(lat,lon, tomorrow).then( res => {
       expect(res).to.be.a('String')
       expect(res).to.contain("The temperature will be between")
@@ -54,6 +55,18 @@ describe("getForecastDay", () => {
     })
   })
 })
+
+const date2fromto = yr.__get__('date2fromto')
+describe("date2fromto", () => {
+  it('should give midnight to midnight',  () => {
+    let tomorrow = "2018-05-18T12:04:03.21+02:00"
+    const res = date2fromto(tomorrow);
+    expect(res).to.be.length(2);
+    expect(res[0]).to.equalTime(new Date("2018-05-18T00:00:00+02:00"))
+    expect(res[1]).to.equalTime(new Date("2018-05-19T00:00:00+02:00"))
+  })
+})
+
 
 const minmaxpoints = yr.__get__('minmaxpoints')
 describe("minmaxpoints", () => {
