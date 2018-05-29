@@ -62,8 +62,8 @@ describe("date2fromto", () => {
     let tomorrow = "2018-05-18T12:04:03.21+02:00"
     const res = date2fromto(tomorrow);
     expect(res).to.be.length(2);
-    expect(res[0]).to.equalTime(new Date("2018-05-18T00:00:00+02:00"))
-    expect(res[1]).to.equalTime(new Date("2018-05-19T00:00:00+02:00"))
+    expect(res[0]).to.equalTime(new Date(Date.parse("May 18 2018 00:00:00 GMT+0200 (CEST)")))
+    expect(res[1]).to.equalTime(new Date(Date.parse("May 19 2018 00:00:00 GMT+0200 (CEST)")))
   })
 })
 
