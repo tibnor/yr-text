@@ -1,5 +1,7 @@
 'use strict'
 
+process.env.TZ = 'Europe/Oslo'
+
 var rewire = require('rewire');
 const nowcast = rewire("./nowcast");
 const expect = require("chai").expect;

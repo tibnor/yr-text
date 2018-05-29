@@ -1,7 +1,7 @@
 'use strict'
 'use ecmaVersion: 2017'
 
-process.env.TZ = 'Europe/London'
+process.env.TZ = 'Europe/Oslo'
 
 var chai = require('chai');
 chai.use(require('chai-like'));
