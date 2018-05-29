@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - "9"
 before_install:
-- export TZ=Norway/Oslo
+- export TZ=CEST
