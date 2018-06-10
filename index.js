@@ -7,12 +7,12 @@ exports.getForecastToday = function(lat,lon) {
   let to = yr_forecast.roundDownDate(Date.now())
   to.setHours(0)
   to.setDate(to.getDate() + 1)
-  let txt = ""
-  return get_forecast.getWeather(lat,lon)
+  let promiseWeather = get_forecast.getWeather(lat,lon)
       .catch(error => {
-        resolve("Weather forecast is not available from yr.no")
+        resolve("Weather forecast is not available from yr.no. ")
       })
       .then(data => {
+		let txt = ""
     const day = yr_forecast.getDay(data,from,to)
     txt += yr_forecast.getSymbolsForDay(day, from,to) + " ";
     const tempNow = yr_forecast.getTemperatureNow(data);
@@ -20,14 +20,19 @@ exports.getForecastToday = function(lat,lon) {
     const minmax = yr_forecast.minmaxpoints(data, from, to)
     const timerange = yr_forecast.getTimeRangeElements(data, from, to)
     txt += yr_forecast.prediction2txt(minmax, timerange) + " "
-    return nowcast.getNowcast(lat,lon)})
+    return txt
+	});
+
+	let promiseNowcast = nowcast.getNowcast(lat,lon)
     .catch( (error) => {
       console.log(error)
-      txt += "Nowcast is not available"
-    })
-    .then( data=> {
-            return txt + data
-    })
+      return "Nowcast is not available"
+    });
+
+	 return Promise.all([promiseWeather, promiseNowcast])
+	 .then( txt => {
+					 return txt[0] + txt[1]
+	 })
 }
 
 exports.getForecastDay = function(lat,lon, day) {
