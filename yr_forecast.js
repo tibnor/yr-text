@@ -1,6 +1,6 @@
 const xml2js = require('xml2js');
 const https = require('https');
-const get_forecast = require('./get-forecasts')
+
 const nowcast = require('./nowcast')
 const parser = new xml2js.Parser();
 const locationUrl = 'https://www.yr.no/sted/Norge/Tr%C3%B8ndelag/Trondheim/Tyholt/'
@@ -27,34 +27,7 @@ function () {
 
 parser.on('error', (err) => { console.log('Parser error', err); });
 
-exports.getForecastToday = function(lat,lon) {
-  let from = new Date()
-  let to = roundDownDate(Date.now())
-  to.setHours(0)
-  to.setDate(to.getDate() + 1)
-  console.log(from,to)
-  let txt = ""
-  return new get_forecast.getWeather(lat,lon)
-      .catch(error => {
-        resolve("Weather forecast is not available from yr.no")
-      })
-      .then(data => {
-    const day = exports.getDay(data,from,to)
-    txt += getSymbolsForDay(day, from,to) + " ";
-    const tempNow = getTemperatureNow(data);
-    txt += temperatureNow2txt(tempNow) + " ";
-    const minmax = minmaxpoints(data, from, to)
-    const timerange = getTimeRangeElements(data, from, to)
-    txt += prediction2txt(minmax, timerange) + " "
-    return nowcast.getNowcast(lat,lon)})
-    .catch( (error) => {
-      console.log(error)
-      txt += "Nowcast is not available"
-    })
-    .then( data=> {
-            return txt + data
-    })
-}
+
 
 function symbolId2txt(id) {
   id2txt={
@@ -103,7 +76,7 @@ function symbolId2txt(id) {
   return id2txt[id].toLowerCase()
 }
 
-function getSymbolsForDay(weatherday) {
+exports.getSymbolsForDay = function(weatherday) {
   //let night = parseInt(weatherday.sixhour[0].symbol[0]["$"].number)
   let morning, morningtxt, day, daytxt, evening, eveningtxt
   if (weatherday.sixhour[6] !== undefined){
@@ -151,7 +124,7 @@ function getSymbolsForDay(weatherday) {
 
 }
 
-function date2fromto(day) {
+exports.date2fromto = function(day) {
   let from = new Date(day)
   from.setMilliseconds(0)
   from.setSeconds(0)
@@ -164,27 +137,7 @@ function date2fromto(day) {
   return [from,to]
 }
 
-exports.getForecastDay = function(lat,lon, day) {
-  const res = date2fromto(day)
-  let from = res[0]
-  let to = res[1]
-  let txt = ""
-  return new get_forecast.getWeather(lat,lon)
-      .catch(error => {
-        resolve("Weather forecast is not available from yr.no")
-      })
-      .then(data => {
-    const day = exports.getDay(data,from,to)
-    txt += getSymbolsForDay(day, from,to) + " ";
-    const minmax = minmaxpoints(data, from, to)
-    const timerange = getTimeRangeElements(data, from, to)
-    txt += prediction2txt(minmax, timerange)
-    return txt
-  }).catch(error => {
-    console.error(error);
-    throw error;
-  })
-}
+
 
 exports.getDay = function(weather, from, to){
   var forecast = weather['product'][0]['time']
@@ -220,7 +173,7 @@ exports.getDay = function(weather, from, to){
   return out
 }
 
-minmaxpoints = function(weather, from, to){
+exports.minmaxpoints = function(weather, from, to){
   try {
     var forecast = weather['product'][0]['time']
   } catch (error) {
@@ -253,10 +206,10 @@ minmaxpoints = function(weather, from, to){
         "maximumwindspeed":maxWindSpeed}
 }
 
-getTimeRangeElements = function(weather, fromIn, toIn){
+exports.getTimeRangeElements = function(weather, fromIn, toIn){
   let out = []
   let forecast = weather['product'][0]['time']
-  let from = roundDownDate(fromIn)
+  let from = exports.roundDownDate(fromIn)
   let to = new Date(from)
   to.setHours(to.getHours()+1)
 
@@ -286,7 +239,7 @@ getTimeRangeElements = function(weather, fromIn, toIn){
   return out
 }
 
-function roundDownDate(from) {
+exports.roundDownDate = function(from) {
   from -= from % (1000 * 60 * 60)
   return new Date(from)
 }
@@ -296,7 +249,7 @@ function roundDownToMidnightDate(from) {
   return new Date(from)
 }
 
-function temperature2str(temperatureNow){
+exports.temperature2str = function(temperatureNow){
   if (temperatureNow < 0){
     temperatureNow = 'minus '+(-temperatureNow)
   } else {
@@ -305,9 +258,9 @@ function temperature2str(temperatureNow){
   return temperatureNow
 }
 
-function prediction2txt(dataminmax, datarange){
-  let minT = temperature2str(dataminmax["minimumtemperature"])
-  let maxT = temperature2str(dataminmax["maximumtemperature"])
+exports.prediction2txt = function(dataminmax, datarange){
+  let minT = exports.temperature2str(dataminmax["minimumtemperature"])
+  let maxT = exports.temperature2str(dataminmax["maximumtemperature"])
   let txt = "The temperature will be between {minT} and {maxT} degrees. ".formatUnicorn({"minT":minT,"maxT":maxT})
   let minP = 0
   let maxP = 0
@@ -323,7 +276,7 @@ function prediction2txt(dataminmax, datarange){
   return txt
 }
 
-function getTemperatureNow(weather) {
+exports.getTemperatureNow = function(weather) {
   try {
     var forecast = weather['product'][0]['time'][0]['location'][0]
   } catch (error) {
@@ -332,7 +285,7 @@ function getTemperatureNow(weather) {
   return parseFloat(forecast['temperature'][0]['$']['value'])
 }
 
-function temperatureNow2txt(temperature){
-  let t = temperature2str(temperature)
+exports.temperatureNow2txt =  function(temperature){
+  let t = exports.temperature2str(temperature)
   return "The temperature is now {temp} degrees.".formatUnicorn({temp: t})
 }
